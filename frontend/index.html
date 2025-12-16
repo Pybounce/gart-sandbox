@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>CodeMirror Demo</title>
+    <title>Bytecode Sandbox</title>
     <style>
       html,
       body {
@@ -65,7 +65,7 @@
         extensions: [basicSetup, javascript()],
         parent: document.getElementById("editor"),
       });
-      import init, { WasmVm } from "./pkg/my_crate.js";
+      import init, { WasmVm } from "./pkg/bytecode-wasm.js";
 
       console.log("initing");
       await init();
@@ -75,6 +75,5 @@
       const result = vm.interpret("var a = 2");
       document.getElementById("output").textContent = result;
     </script>
-    <script src="sandbox.js"></script>
   </body>
 </html>
