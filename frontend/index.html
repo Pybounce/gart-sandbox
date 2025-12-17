@@ -46,11 +46,17 @@
         width: auto;
         margin-bottom: 50px;
       }
+      .button-play {
+        height: 30px;
+        width: 100px;
+        border: 1px solid #000;
+      }
     </style>
   </head>
   <body>
     <div id="view">
       <h1 id="header">Sandbox</h1>
+      <div id="play_btn" class="button-play"></div>
       <div id="body">
         <div id="editor"></div>
         <div id="output"></div>
@@ -62,29 +68,35 @@
       import { indentWithTab } from "https://esm.sh/@codemirror/commands";
       import { keymap } from "https://esm.sh/@codemirror/view";
 
-      new EditorView({
+      let editor_view = new EditorView({
         doc: "",
         extensions: [basicSetup, keymap.of([indentWithTab]), python()],
         parent: document.getElementById("editor"),
       });
+
+      document.getElementById("play_btn").addEventListener("click", click_play);
+
       import init, { WasmVm } from "./pkg/bytecode_wasm.js";
 
       console.log("initing");
       await init();
       console.log("init success");
 
-      const vm = new WasmVm();
-      const result = vm.interpret("var a =");
+      function click_play() {
+        let source = editor_view.state.doc.toString();
+        const vm = new WasmVm();
+        const result = vm.interpret(source);
 
-      if (result.success) {
-        console.log("Program ran successfully!");
-      } else if (result.compile_errors.length > 0) {
-        console.log("Compile errors:");
-        for (let err of result.compile_errors) {
-          console.log(`Line ${err.line}, start ${err.start}, len ${err.len}`);
+        if (result.success) {
+          console.log("Program ran successfully!");
+        } else if (result.compile_errors.length > 0) {
+          console.log("Compile errors:");
+          for (let err of result.compile_errors) {
+            console.log(`Line ${err.line}, start ${err.start}, len ${err.len}`);
+          }
+        } else if (result.runtime_error) {
+          console.log("Runtime error:", result.runtime_error.message);
         }
-      } else if (result.runtime_error) {
-        console.log("Runtime error:", result.runtime_error.message);
       }
     </script>
   </body>
