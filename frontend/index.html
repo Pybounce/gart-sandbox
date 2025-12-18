@@ -74,6 +74,19 @@
         parent: document.getElementById("editor"),
       });
 
+      import { linter } from "@codemirror/lint";
+
+      function makeLinter(errors) {
+        return linter(() => {
+          return errors.map((err) => ({
+            from: err.start,
+            to: err.start + err.len,
+            severity: "error",
+            message: "Compile error",
+          }));
+        });
+      }
+
       document.getElementById("play_btn").addEventListener("click", click_play);
 
       import init, { WasmVm } from "./pkg/bytecode_wasm.js";
@@ -94,6 +107,11 @@
           for (let err of result.compile_errors) {
             console.log(`Line ${err.line}, start ${err.start}, len ${err.len}`);
           }
+          editor_view.dispatch({
+            effects: StateEffect.appendConfig.of(
+              makeLinter(result.compile_errors)
+            ),
+          });
         } else if (result.runtime_error) {
           console.log("Runtime error:", result.runtime_error.message);
         }
