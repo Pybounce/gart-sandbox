@@ -285,6 +285,19 @@ export class JsNativeFn {
         const ptr = this.__destroy_into_raw();
         wasm.__wbg_jsnativefn_free(ptr, 0);
     }
+    /**
+     * @param {string} name
+     * @param {number} arity
+     * @param {Function} _function
+     */
+    constructor(name, arity, _function) {
+        const ptr0 = passStringToWasm0(name, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.jsnativefn_new(ptr0, len0, arity, _function);
+        this.__wbg_ptr = ret >>> 0;
+        JsNativeFnFinalization.register(this, this.__wbg_ptr, this);
+        return this;
+    }
 }
 if (Symbol.dispose) JsNativeFn.prototype[Symbol.dispose] = JsNativeFn.prototype.free;
 
