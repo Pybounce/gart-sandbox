@@ -63,18 +63,18 @@
       </div>
     </div>
     <script type="module">
-      import { EditorView, basicSetup } from "https://esm.sh/codemirror";
-      import { python } from "https://esm.sh/@codemirror/lang-python";
-      import { indentWithTab } from "https://esm.sh/@codemirror/commands";
-      import { keymap } from "https://esm.sh/@codemirror/view";
+      import { EditorView, basicSetup } from "https://esm.sh/codemirror"
+      import { python } from "https://esm.sh/@codemirror/lang-python"
+      import { indentWithTab } from "https://esm.sh/@codemirror/commands"
+      import { keymap } from "https://esm.sh/@codemirror/view"
 
       let editor_view = new EditorView({
         doc: "",
         extensions: [basicSetup, keymap.of([indentWithTab]), python()],
         parent: document.getElementById("editor"),
-      });
+      })
 
-      import { linter } from "https://esm.sh/@codemirror/lint";
+      import { linter } from "https://esm.sh/@codemirror/lint"
 
       function makeLinter(errors) {
         return linter(() => {
@@ -83,37 +83,44 @@
             to: err.start + err.len,
             severity: "error",
             message: "Compile error",
-          }));
-        });
+          }))
+        })
       }
 
-      document.getElementById("play_btn").addEventListener("click", click_play);
+      document.getElementById("play_btn").addEventListener("click", click_play)
 
-      import init, { WasmVm } from "./pkg/bytecode_wasm.js";
+      import init, { WasmVm } from "./pkg/bytecode_wasm.js"
 
-      console.log("initing");
-      await init();
-      console.log("init success");
+      function writeToOutputDiv(text) {
+        const div = document.getElementById("output")
+        div.textContent += text + "\n"
+      }
+      const printFn = new JsNativeFn("print", 1, writeToOutputDiv)
+      interpreter.register_native(printFn)
+
+      console.log("initing")
+      await init()
+      console.log("init success")
 
       function click_play() {
-        let source = editor_view.state.doc.toString();
-        const vm = new WasmVm();
-        const result = vm.interpret(source);
+        let source = editor_view.state.doc.toString()
+        const vm = new WasmVm()
+        const result = vm.interpret(source, [printFn])
 
         if (result.success) {
-          console.log("Program ran successfully!");
+          console.log("Program ran successfully!")
         } else if (result.compile_errors.length > 0) {
-          console.log("Compile errors:");
+          console.log("Compile errors:")
           for (let err of result.compile_errors) {
-            console.log(`Line ${err.line}, start ${err.start}, len ${err.len}`);
+            console.log(`Line ${err.line}, start ${err.start}, len ${err.len}`)
           }
           editor_view.dispatch({
             effects: StateEffect.appendConfig.of(
               makeLinter(result.compile_errors)
             ),
-          });
+          })
         } else if (result.runtime_error) {
-          console.log("Runtime error:", result.runtime_error.message);
+          console.log("Runtime error:", result.runtime_error.message)
         }
       }
     </script>
