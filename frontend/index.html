@@ -99,6 +99,10 @@
 
       import init, { WasmVm, JsNativeFn } from "./pkg/bytecode_wasm.js"
 
+      function get_input(text) {
+        return prompt(text, "")
+      }
+
       function write_to_output(text) {
         const div = document.getElementById("output")
         div.textContent += text + "\n"
@@ -121,10 +125,11 @@
       function click_play() {
         clear_output()
         const printFn = new JsNativeFn("print", 1, write_to_output)
+        const inputFn = new JsNativeFn("input", 1, get_input)
 
         let source = editor_view.state.doc.toString()
         const vm = new WasmVm()
-        const result = vm.interpret(source, [printFn])
+        const result = vm.interpret(source, [printFn, inputFn])
 
         if (result.success) {
           console.log("Program ran successfully!")
