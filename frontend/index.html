@@ -100,7 +100,7 @@
 
       document.getElementById("play_btn").addEventListener("click", click_play)
 
-      import init, { WasmVm, JsNativeFn } from "./pkg/bytecode_wasm.js"
+      import init, { WasmVm, JsNativeFn, compile } from "./pkg/bytecode_wasm.js"
 
       function get_input(text) {
         return prompt(text, "")
@@ -131,14 +131,10 @@
         const inputFn = new JsNativeFn("input", 1, get_input)
 
         let source = editor_view.state.doc.toString()
-        const vm = new WasmVm()
-        const result = vm.interpret(source, [printFn, inputFn])
 
-        if (result.success) {
-          console.log("Program ran successfully!")
-        } else if (result.compile_errors.length > 0) {
-          console.log("Compile errors:")
-          for (let err of result.compile_errors) {
+        const compilation_result = compile(source, [printFn, inputFn])
+        if (compilation_result.success == false) {
+          for (let err of compilation_result.take_compile_errors) {
             write_error(`Line ${err.line}, start ${err.start}, len ${err.len}`)
           }
           editor_view.dispatch({
@@ -146,6 +142,13 @@
               makeLinter(result.compile_errors)
             ),
           })
+          return
+        }
+        let vm = compilation_result.take_interpreter()
+        let result = vm.interpret()
+
+        if (result.success) {
+          console.log("Program ran successfully!")
         } else if (result.runtime_error) {
           write_error(result.runtime_error.message)
         }

@@ -192,6 +192,10 @@ if (!('encodeInto' in cachedTextEncoder)) {
 
 let WASM_VECTOR_LEN = 0;
 
+const CompileResultFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_compileresult_free(ptr >>> 0, 1));
+
 const CompilerErrFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
     : new FinalizationRegistry(ptr => wasm.__wbg_compilererr_free(ptr >>> 0, 1));
@@ -207,6 +211,53 @@ const OutputFinalization = (typeof FinalizationRegistry === 'undefined')
 const WasmVmFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
     : new FinalizationRegistry(ptr => wasm.__wbg_wasmvm_free(ptr >>> 0, 1));
+
+export class CompileResult {
+    static __wrap(ptr) {
+        ptr = ptr >>> 0;
+        const obj = Object.create(CompileResult.prototype);
+        obj.__wbg_ptr = ptr;
+        CompileResultFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        CompileResultFinalization.unregister(this);
+        return ptr;
+    }
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_compileresult_free(ptr, 0);
+    }
+    /**
+     * @returns {WasmVm | undefined}
+     */
+    take_interpreter() {
+        const ret = wasm.compileresult_take_interpreter(this.__wbg_ptr);
+        return ret === 0 ? undefined : WasmVm.__wrap(ret);
+    }
+    /**
+     * @returns {CompilerErr[] | undefined}
+     */
+    take_compile_errors() {
+        const ret = wasm.compileresult_take_compile_errors(this.__wbg_ptr);
+        let v1;
+        if (ret[0] !== 0) {
+            v1 = getArrayJsValueFromWasm0(ret[0], ret[1]).slice();
+            wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
+        }
+        return v1;
+    }
+    /**
+     * @returns {boolean}
+     */
+    get success() {
+        const ret = wasm.compileresult_success(this.__wbg_ptr);
+        return ret !== 0;
+    }
+}
+if (Symbol.dispose) CompileResult.prototype[Symbol.dispose] = CompileResult.prototype.free;
 
 export class CompilerErr {
     static __wrap(ptr) {
@@ -335,15 +386,6 @@ export class Output {
         }
     }
     /**
-     * @returns {CompilerErr[]}
-     */
-    get compile_errors() {
-        const ret = wasm.output_compile_errors(this.__wbg_ptr);
-        var v1 = getArrayJsValueFromWasm0(ret[0], ret[1]).slice();
-        wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
-        return v1;
-    }
-    /**
      * @returns {boolean}
      */
     get success() {
@@ -354,6 +396,13 @@ export class Output {
 if (Symbol.dispose) Output.prototype[Symbol.dispose] = Output.prototype.free;
 
 export class WasmVm {
+    static __wrap(ptr) {
+        ptr = ptr >>> 0;
+        const obj = Object.create(WasmVm.prototype);
+        obj.__wbg_ptr = ptr;
+        WasmVmFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
     __destroy_into_raw() {
         const ptr = this.__wbg_ptr;
         this.__wbg_ptr = 0;
@@ -364,27 +413,29 @@ export class WasmVm {
         const ptr = this.__destroy_into_raw();
         wasm.__wbg_wasmvm_free(ptr, 0);
     }
-    constructor() {
-        const ret = wasm.wasmvm_new();
-        this.__wbg_ptr = ret >>> 0;
-        WasmVmFinalization.register(this, this.__wbg_ptr, this);
-        return this;
-    }
     /**
-     * @param {string} source
-     * @param {JsNativeFn[]} natives
      * @returns {Output}
      */
-    interpret(source, natives) {
-        const ptr0 = passStringToWasm0(source, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        const len0 = WASM_VECTOR_LEN;
-        const ptr1 = passArrayJsValueToWasm0(natives, wasm.__wbindgen_malloc);
-        const len1 = WASM_VECTOR_LEN;
-        const ret = wasm.wasmvm_interpret(this.__wbg_ptr, ptr0, len0, ptr1, len1);
+    interpret() {
+        const ret = wasm.wasmvm_interpret(this.__wbg_ptr);
         return Output.__wrap(ret);
     }
 }
 if (Symbol.dispose) WasmVm.prototype[Symbol.dispose] = WasmVm.prototype.free;
+
+/**
+ * @param {string} source
+ * @param {JsNativeFn[]} natives
+ * @returns {CompileResult}
+ */
+export function compile(source, natives) {
+    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ptr1 = passArrayJsValueToWasm0(natives, wasm.__wbindgen_malloc);
+    const len1 = WASM_VECTOR_LEN;
+    const ret = wasm.compile(ptr0, len0, ptr1, len1);
+    return CompileResult.__wrap(ret);
+}
 
 const EXPECTED_RESPONSE_TYPES = new Set(['basic', 'cors', 'default']);
 
