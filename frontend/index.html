@@ -176,8 +176,7 @@
         for (let i = 0; i < step_count; i++) {
           if (flush_out) {
             flush_out = false
-            setTimeout(() => run_vm(vm), 0)
-            i = 0
+            break
           }
           let step = vm.step()
 
