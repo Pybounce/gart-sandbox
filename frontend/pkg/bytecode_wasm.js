@@ -371,25 +371,22 @@ export class Output {
         wasm.__wbg_output_free(ptr, 0);
     }
     /**
-     * @returns {string}
+     * @returns {string | undefined}
      */
     get runtime_error() {
-        let deferred1_0;
-        let deferred1_1;
-        try {
-            const ret = wasm.output_runtime_error(this.__wbg_ptr);
-            deferred1_0 = ret[0];
-            deferred1_1 = ret[1];
-            return getStringFromWasm0(ret[0], ret[1]);
-        } finally {
-            wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+        const ret = wasm.output_runtime_error(this.__wbg_ptr);
+        let v1;
+        if (ret[0] !== 0) {
+            v1 = getStringFromWasm0(ret[0], ret[1]).slice();
+            wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
         }
+        return v1;
     }
     /**
      * @returns {boolean}
      */
-    get success() {
-        const ret = wasm.output_success(this.__wbg_ptr);
+    get finished() {
+        const ret = wasm.output_finished(this.__wbg_ptr);
         return ret !== 0;
     }
 }
@@ -412,6 +409,13 @@ export class WasmVm {
     free() {
         const ptr = this.__destroy_into_raw();
         wasm.__wbg_wasmvm_free(ptr, 0);
+    }
+    /**
+     * @returns {Output}
+     */
+    step() {
+        const ret = wasm.wasmvm_step(this.__wbg_ptr);
+        return Output.__wrap(ret);
     }
     /**
      * @returns {Output}
