@@ -149,15 +149,18 @@
       }
 
       function run_vm(vm) {
-        let step = vm.step()
+        const step_count = 10_000
+        for (let i = 0; i < step_count; i++) {
+          let step = vm.step()
 
-        if (step.runtime_error) {
-          write_error(step.runtime_error)
-          return
-        }
+          if (step.runtime_error) {
+            write_error(step.runtime_error)
+            return
+          }
 
-        if (step.finished == true) {
-          return
+          if (step.finished == true) {
+            return
+          }
         }
         setTimeout(() => run_vm(vm), 0)
       }
