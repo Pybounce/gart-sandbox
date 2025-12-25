@@ -108,17 +108,25 @@
 
       function write_to_output(text) {
         const div = document.getElementById("output")
-        div.textContent += text + "\n"
+        const line = document.createElement("div")
+        line.textContent = text
+        div.appendChild(line)
+        while (div.childNodes.length > MAX_LINES) {
+          div.removeChild(div.firstChild)
+        }
       }
 
       function write_error(text) {
         const div = document.getElementById("output")
-        div.textContent += "[ERROR] " + text + "\n"
+        write_to_output("[ERROR] " + text)
       }
 
       function clear_output() {
         const div = document.getElementById("output")
         div.textContent = ""
+        while (div.childNodes.length > 0) {
+          div.removeChild(div.firstChild)
+        }
       }
 
       console.log("initing")
