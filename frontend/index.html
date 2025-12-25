@@ -30,7 +30,6 @@
         border: 1px solid #000;
         overflow: auto;
         white-space: pre-wrap;
-        flex-direction: column-reverse;
         display: flex;
       }
       #view {
@@ -107,7 +106,7 @@
       }
 
       function write_to_output(text) {
-        const MAX_LINES = 100
+        const MAX_LINES = 5000
         const div = document.getElementById("output")
         const line = document.createElement("div")
         line.textContent = text
