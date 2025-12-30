@@ -15,7 +15,7 @@
         width: 45%;
         overflow: auto;
         font-size: medium;
-        background-color: rgb(95, 136, 153);
+        background-color: rgb(239, 230, 214);
       }
       #editor .cm-editor {
         font-size: medium;
@@ -31,7 +31,7 @@
         white-space: pre-wrap;
         flex-direction: column;
         display: flex;
-        background-color: rgb(95, 136, 153);
+        background-color: rgb(239, 230, 214);
       }
       #view {
         height: 90%;
@@ -41,9 +41,11 @@
         margin-bottom: 50px;
         display: flex;
         flex-direction: column;
-        background-color: rgb(80, 111, 124);
       }
       #body {
+        background-color: wheat;
+      }
+      #inner_body {
         max-height: 100%;
         max-width: 100%;
         min-height: 100%;
@@ -65,11 +67,11 @@
       }
     </style>
   </head>
-  <body>
+  <body id="body">
     <div id="view">
       <h1 id="header">Sandbox</h1>
       <div id="play_btn" class="button-play"></div>
-      <div id="body">
+      <div id="inner_body">
         <div id="editor"></div>
         <div id="output"></div>
       </div>
