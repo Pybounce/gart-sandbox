@@ -5,55 +5,48 @@
     <title>Bytecode Sandbox</title>
     <style>
       :root {
-        --main-bg: rgb(208, 227, 238);
-        --editor-bg: rgb(216, 231, 240);
-        --editor-highlight: rgb(231, 240, 245);
-        --header-bg: rgb(225, 235, 245);
-        --border-col: rgba(0, 0, 0, 0.15);
+        --bg: #e7e3da;
+        --header-bg: #ddd7c8;
+        --editor-bg: #f4f1ea;
+        --highlight: #ece7dd;
+        --border: rgba(0, 0, 0, 0.15);
+        --text: #2b2b2b;
+        --accent: #5a6fa8;
+        --accent-hover: #44558a;
       }
 
       html,
       body {
         height: 100%;
         margin: 0;
-        background-color: var(--main-bg);
+        background-color: var(--bg);
         display: flex;
         flex-direction: column;
+        font-family: sans-serif;
+        color: var(--text);
       }
 
       #header_bar {
-        height: 50px;
+        height: 40px;
         width: 100%;
         background-color: var(--header-bg);
-        border-bottom: 1px solid var(--border-col);
+        border-bottom: 1px solid var(--border);
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        padding: 0 20px;
+        padding: 0 14px;
         box-sizing: border-box;
       }
 
       #header_title {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
         font-weight: 600;
-      }
-
-      .button-play {
-        height: 30px;
-        width: 80px;
-        border: 1px solid var(--border-col);
-        background: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
       }
 
       #inner_body {
         flex: 1;
         display: flex;
         flex-direction: row;
-        height: calc(100% - 50px);
+        position: relative;
       }
 
       #editor,
@@ -61,12 +54,39 @@
         width: 50%;
         overflow: auto;
         background-color: var(--editor-bg);
-        font-size: medium;
+        color: var(--text);
+        position: relative;
       }
 
       #divider {
         width: 1px;
-        background-color: var(--border-col);
+        background-color: var(--border);
+      }
+      #run_floating {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 120px;
+        height: 38px;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.15s ease, color 0.15s ease,
+          border-color 0.15s ease, box-shadow 0.15s ease;
+        font-size: 16px;
+        line-height: 0;
+        padding: 0;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+      }
+
+      #run_floating:hover {
+        background: #d6cfc2;
+        border-color: rgba(0, 0, 0, 0.25);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
       }
 
       #editor .cm-editor {
@@ -81,24 +101,67 @@
       }
 
       #editor .cm-activeLine {
-        background-color: var(--editor-highlight) !important;
+        background-color: var(--highlight) !important;
       }
 
       #editor .cm-activeLineGutter {
-        background-color: var(--editor-highlight) !important;
+        background-color: var(--highlight) !important;
+      }
+
+      #editor .cm-content {
+        color: var(--text) !important;
+      }
+
+      #editor .cm-keyword {
+        color: #8b4f8f;
+        font-weight: 600;
+      }
+
+      #editor .cm-string {
+        color: #a67c52;
+      }
+
+      #editor .cm-number {
+        color: #b35c3a;
+      }
+
+      #editor .cm-comment {
+        color: #7d7a72;
+        font-style: italic;
+      }
+
+      #editor .cm-variable {
+        color: #3a3a3a;
+      }
+
+      #editor .cm-variable.cm-function {
+        color: #5a6fa8;
+      }
+
+      #editor .cm-operator {
+        color: #6b5b4d;
+      }
+
+      #editor .cm-punctuation {
+        color: #4a463f;
       }
     </style>
   </head>
   <body id="body">
-    <div id="header_bar">
-      <div id="header_title">Sandbox</div>
-      <div id="play_btn" class="button-play">Run</div>
-    </div>
-    <div id="inner_body">
-      <div id="editor"></div>
-      <div id="divider"></div>
-      <div id="output"></div>
-    </div>
+    <body>
+      <div id="header_bar">
+        <div id="header_title">Sandbox</div>
+      </div>
+
+      <div id="inner_body">
+        <div id="editor">
+          <button id="run_floating">Run Script</button>
+        </div>
+        <div id="divider"></div>
+        <div id="output"></div>
+      </div>
+    </body>
+
     <script type="module">
       import { EditorView, basicSetup } from "https://esm.sh/codemirror";
       import { python } from "https://esm.sh/@codemirror/lang-python";
