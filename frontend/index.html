@@ -34,7 +34,6 @@
         display: flex;
         align-items: center;
         padding: 0 14px;
-        box-sizing: border-box;
         gap: 10px;
       }
 
@@ -47,119 +46,67 @@
         flex: 1;
         display: flex;
         flex-direction: row;
-        position: relative;
         min-height: 0;
+      }
+
+      #editor_container,
+      #output_container {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        background: var(--editor-bg);
+      }
+
+      .panel_toolbar {
+        height: 36px;
+        background: var(--editor-bg);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 0 0 10px;
+      }
+
+      .panel_label {
+        font-weight: 600;
+      }
+
+      .panel_run_btn {
+        background: none;
+        border: none;
+        border-left: 1px solid var(--border);
+        font-size: 15px;
+        font-weight: 600;
+        padding: 6px 12px;
+        cursor: pointer;
+        border-radius: 0;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        transition: background 0.15s ease;
+      }
+
+      .panel_run_btn:hover {
+        background: var(--highlight);
+      }
+
+      .panel_run_btn:active {
+        background: #dfd6c7;
       }
 
       #editor,
       #output {
-        width: 50%;
+        flex: 1;
         overflow: auto;
         background-color: var(--editor-bg);
-        color: var(--text);
         position: relative;
-        min-height: 0;
       }
 
       #divider {
         width: 1px;
         background-color: var(--border);
       }
-      #run_floating {
-        position: absolute;
-        z-index: 20;
-        top: 10px;
-        right: 10px;
-        width: 120px;
-        height: 38px;
-        border-radius: 4px;
-        border: 1px solid var(--border);
-        background: #f5efe2;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: background 0.15s ease, color 0.15s ease,
-          border-color 0.15s ease, box-shadow 0.15s ease;
-        font-size: 16px;
-        font-weight: 500;
-        line-height: 0;
-        padding: 0;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
-        color: #2b2b2b;
-      }
 
-      #run_floating:hover {
-        background: #ece4d4;
-        border-color: rgba(0, 0, 0, 0.25);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-      }
-      #run_floating:active {
-        box-shadow: none;
-        background: #e4dccd;
-      }
-      #editor .cm-editor {
-        font-size: medium;
-        height: 100%;
-        width: 100%;
-      }
-      #editor .cm-selectionBackground {
-        background: #bfb7a8 !important;
-      }
-      #editor .cm-content ::selection {
-        background: #c8c2b6 !important;
-      }
-
-      #editor .cm-gutters {
-        background-color: var(--editor-bg);
-        border: none !important;
-      }
-
-      #editor .cm-activeLine {
-        background-color: var(--highlight) !important;
-      }
-
-      #editor .cm-activeLineGutter {
-        background-color: var(--highlight) !important;
-      }
-
-      #editor .cm-content {
-        color: var(--text) !important;
-      }
-
-      #editor .cm-keyword {
-        color: #8b4f8f;
-        font-weight: 600;
-      }
-
-      #editor .cm-string {
-        color: #a67c52;
-      }
-
-      #editor .cm-number {
-        color: #b35c3a;
-      }
-
-      #editor .cm-comment {
-        color: #7d7a72;
-        font-style: italic;
-      }
-
-      #editor .cm-variable {
-        color: #3a3a3a;
-      }
-
-      #editor .cm-variable.cm-function {
-        color: #5a6fa8;
-      }
-
-      #editor .cm-operator {
-        color: #6b5b4d;
-      }
-
-      #editor .cm-punctuation {
-        color: #4a463f;
-      }
       #github_link {
         display: flex;
         align-items: center;
@@ -176,6 +123,58 @@
 
       #github_icon {
         display: block;
+      }
+
+      #editor .cm-editor {
+        font-size: medium;
+        height: 100%;
+        width: 100%;
+      }
+
+      #editor .cm-selectionBackground {
+        background: #bfb7a8 !important;
+      }
+      #editor .cm-content ::selection {
+        background: #c8c2b6 !important;
+      }
+      #editor .cm-gutters {
+        background-color: var(--editor-bg);
+        border: none !important;
+      }
+      #editor .cm-activeLine {
+        background-color: var(--highlight) !important;
+      }
+      #editor .cm-activeLineGutter {
+        background-color: var(--highlight) !important;
+      }
+      #editor .cm-content {
+        color: var(--text) !important;
+      }
+      #editor .cm-keyword {
+        color: #8b4f8f;
+        font-weight: 600;
+      }
+      #editor .cm-string {
+        color: #a67c52;
+      }
+      #editor .cm-number {
+        color: #b35c3a;
+      }
+      #editor .cm-comment {
+        color: #7d7a72;
+        font-style: italic;
+      }
+      #editor .cm-variable {
+        color: #3a3a3a;
+      }
+      #editor .cm-variable.cm-function {
+        color: #5a6fa8;
+      }
+      #editor .cm-operator {
+        color: #6b5b4d;
+      }
+      #editor .cm-punctuation {
+        color: #4a463f;
       }
     </style>
   </head>
@@ -204,16 +203,23 @@
         </a>
         <div id="header_title">Sandbox</div>
       </div>
-
       <div id="inner_body">
-        <div id="editor">
-          <button id="run_floating">Run Script</button>
+        <div id="editor_container">
+          <div class="panel_toolbar">
+            <span class="panel_label">Sandbox</span>
+            <button id="play_btn" class="panel_run_btn">Run Script</button>
+          </div>
+          <div id="editor"></div>
         </div>
         <div id="divider"></div>
-        <div id="output"></div>
+        <div id="output_container">
+          <div class="panel_toolbar">
+            <span class="panel_label">Output</span>
+          </div>
+          <div id="output"></div>
+        </div>
       </div>
     </body>
-
     <script type="module">
       import { EditorView, basicSetup } from "https://esm.sh/codemirror";
       import { python } from "https://esm.sh/@codemirror/lang-python";
@@ -239,9 +245,7 @@
         });
       }
 
-      document
-        .getElementById("run_floating")
-        .addEventListener("click", click_play);
+      document.getElementById("play_btn").addEventListener("click", click_play);
 
       import init, {
         WasmVm,
