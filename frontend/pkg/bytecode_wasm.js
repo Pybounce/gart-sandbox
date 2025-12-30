@@ -231,6 +231,13 @@ export class CompileResult {
         wasm.__wbg_compileresult_free(ptr, 0);
     }
     /**
+     * @returns {boolean}
+     */
+    get success() {
+        const ret = wasm.compileresult_success(this.__wbg_ptr);
+        return ret !== 0;
+    }
+    /**
      * @returns {WasmVm | undefined}
      */
     take_interpreter() {
@@ -248,13 +255,6 @@ export class CompileResult {
             wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
         }
         return v1;
-    }
-    /**
-     * @returns {boolean}
-     */
-    get success() {
-        const ret = wasm.compileresult_success(this.__wbg_ptr);
-        return ret !== 0;
     }
 }
 if (Symbol.dispose) CompileResult.prototype[Symbol.dispose] = CompileResult.prototype.free;
@@ -371,6 +371,13 @@ export class Output {
         wasm.__wbg_output_free(ptr, 0);
     }
     /**
+     * @returns {boolean}
+     */
+    get finished() {
+        const ret = wasm.output_finished(this.__wbg_ptr);
+        return ret !== 0;
+    }
+    /**
      * @returns {string | undefined}
      */
     get runtime_error() {
@@ -381,13 +388,6 @@ export class Output {
             wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
         }
         return v1;
-    }
-    /**
-     * @returns {boolean}
-     */
-    get finished() {
-        const ret = wasm.output_finished(this.__wbg_ptr);
-        return ret !== 0;
     }
 }
 if (Symbol.dispose) Output.prototype[Symbol.dispose] = Output.prototype.free;
@@ -413,15 +413,15 @@ export class WasmVm {
     /**
      * @returns {Output}
      */
-    step() {
-        const ret = wasm.wasmvm_step(this.__wbg_ptr);
+    interpret() {
+        const ret = wasm.wasmvm_interpret(this.__wbg_ptr);
         return Output.__wrap(ret);
     }
     /**
      * @returns {Output}
      */
-    interpret() {
-        const ret = wasm.wasmvm_interpret(this.__wbg_ptr);
+    step() {
+        const ret = wasm.wasmvm_step(this.__wbg_ptr);
         return Output.__wrap(ret);
     }
 }
