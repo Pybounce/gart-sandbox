@@ -387,6 +387,9 @@
 
       function click_play() {
         clear_output();
+        editor_view.dispatch({
+          effects: StateEffect.appendConfig.of(makeLinter([])),
+        });
         const printFn = new JsNativeFn("print", 1, write_to_output);
         const inputFn = new JsNativeFn("input", 1, get_input);
         const flushFn = new JsNativeFn("flush", 0, flush);
