@@ -295,7 +295,7 @@
         .addEventListener("change", (e) => on_example_select(e.target.value));
 
       function on_example_select(example) {
-        fetch(`examples/${name}.dat`)
+        fetch(`examples/${example}.dat`)
           .then((response) => response.text())
           .then((text) => {
             editor_view.dispatch({
