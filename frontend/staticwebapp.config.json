@@ -1,8 +1,0 @@
-{
-  "routes": [
-    {
-      "route": "/examples/*",
-      "allowedRoles": ["anonymous"]
-    }
-  ]
-}
