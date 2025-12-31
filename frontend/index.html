@@ -402,12 +402,13 @@
         ]);
 
         if (compilation_result.success == false) {
-          for (let err of compilation_result.take_compile_errors()) {
+          const compilation_errors = compilation_result.take_compile_errors();
+          for (let err of compilation_errors) {
             write_error(`Line ${err.line}, start ${err.start}, len ${err.len}`);
           }
           editor_view.dispatch({
             effects: StateEffect.appendConfig.of(
-              makeLinter(result.compile_errors)
+              makeLinter(compilation_errors)
             ),
           });
           return;
