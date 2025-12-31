@@ -288,11 +288,18 @@
       import { python } from "https://esm.sh/@codemirror/lang-python";
       import { indentWithTab } from "https://esm.sh/@codemirror/commands";
       import { keymap } from "https://esm.sh/@codemirror/view";
-      import { StateEffect } from "https://esm.sh/@codemirror/state";
+      import { Compartment } from "@codemirror/state";
+
+      const lintCompartment = new Compartment();
 
       let editor_view = new EditorView({
         doc: "",
-        extensions: [basicSetup, keymap.of([indentWithTab]), python()],
+        extensions: [
+          lintCompartment.of(linter(() => [])),
+          basicSetup,
+          keymap.of([indentWithTab]),
+          python(),
+        ],
         parent: document.getElementById("editor"),
       });
 
@@ -388,7 +395,7 @@
       function click_play() {
         clear_output();
         editor_view.dispatch({
-          effects: StateEffect.appendConfig.of(makeLinter([])),
+          effects: lintCompartment.reconfigure(makeLinter([])),
         });
         const printFn = new JsNativeFn("print", 1, write_to_output);
         const inputFn = new JsNativeFn("input", 1, get_input);
@@ -410,7 +417,7 @@
             write_error(`Line ${err.line}, start ${err.start}, len ${err.len}`);
           }
           editor_view.dispatch({
-            effects: StateEffect.appendConfig.of(
+            effects: lintCompartment.reconfigure(
               makeLinter(compilation_errors)
             ),
           });
