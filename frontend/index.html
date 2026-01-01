@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="logo.svg" />
-    <title>Bytecode Sandbox</title>
+    <title>Gart Sandbox</title>
     <style>
       :root {
         --bg: #e7e3da;
@@ -234,7 +234,7 @@
       <div id="header_bar">
         <a
           id="github_link"
-          href="https://github.com/Pybounce/bytecode_vm"
+          href="https://github.com/Pybounce/gart"
           target="_blank"
           aria-label="GitHub"
         >
@@ -253,7 +253,7 @@
           </svg>
         </a>
         <div id="header_title">
-          <a href="index.html" id="header_link">Sandbox</a>
+          <a href="index.html" id="header_link">Gart Sandbox</a>
         </div>
       </div>
       <div id="inner_body">
@@ -353,11 +353,7 @@
         on_example_select(dropdown.value);
       });
 
-      import init, {
-        WasmVm,
-        JsNativeFn,
-        compile,
-      } from "./pkg/bytecode_wasm.js";
+      import init, { WasmVm, JsNativeFn, compile } from "./pkg/gart_wasm.js";
 
       var flush_out = false;
 
